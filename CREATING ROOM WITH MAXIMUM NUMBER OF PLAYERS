@@ -1,0 +1,103 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
+public class networkmanager : MonoBehaviourPunCallbacks
+{
+    // Start is called before the first frame update
+    [Header("login ui panel")]
+    public InputField playernameinput;
+    public GameObject loginuipanel;
+
+
+    [Header("game options ui panel")]
+    public GameObject gameoptionsuipanel;
+
+
+    [Header("createroom ui panel")]
+    public GameObject createroompanel;
+    public InputField roomanmeinputfield;
+    public InputField maxplayer;
+
+    [Header("insideroom ui panel")]
+    public GameObject insideroompanel;
+
+    [Header("room list ui panel")]
+    public GameObject roomlistuipanel;
+    #region unity
+    void Start()
+    {
+        activatepanel(loginuipanel.name);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    #endregion unity
+    #region ui callbacks
+    public void Onloginbuttonclicked()
+    {
+        string playername = playernameinput.text;
+        if (!string.IsNullOrEmpty(playername))
+        {
+
+            PhotonNetwork.LocalPlayer.NickName = playername;
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        else {
+
+            Debug.Log("invalid name");
+        }
+        
+    }
+    public void onroomcreatebuttonclicked() {
+
+        string roomname = roomanmeinputfield.text;
+        if (string.IsNullOrEmpty(roomname)) {
+
+            roomname = "room" + Random.Range(1, 1000);
+        }
+        RoomOptions roomoptions = new RoomOptions();
+        roomoptions.MaxPlayers = (byte)int.Parse(maxplayer.text);
+        PhotonNetwork.CreateRoom(roomname, roomoptions);
+        
+    }
+    public void oncancelbutton() {
+
+        activatepanel(gameoptionsuipanel.name);
+    }
+    #endregion ui callbacks
+    #region photon callbacks
+    public override void OnConnected()
+    {
+        Debug.Log("connected to internet");
+    }
+    public override void OnConnectedToMaster()
+    {
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName + "is connected to photn");
+        activatepanel(gameoptionsuipanel.name);
+    }
+    public override void OnCreatedRoom()
+    {
+        Debug.Log(PhotonNetwork.CurrentRoom + "is created");
+    }
+    public override void OnJoinedRoom()
+    {
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName + "joined to " + PhotonNetwork.CurrentRoom.Name);
+        activatepanel(insideroompanel.name);
+    }
+    #endregion photon callbacks
+    #region public methods
+    public void activatepanel(string paneltobeactivated) {
+
+        loginuipanel.SetActive(paneltobeactivated.Equals(loginuipanel.name));
+        gameoptionsuipanel.SetActive(paneltobeactivated.Equals(gameoptionsuipanel.name));
+        createroompanel.SetActive(paneltobeactivated.Equals(createroompanel.name));
+        insideroompanel.SetActive(paneltobeactivated.Equals(insideroompanel.name));
+    }
+    #endregion
+}
