@@ -1,0 +1,75 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using Photon.Pun;
+public class networkmanager : MonoBehaviourPunCallbacks
+{
+    // Start is called before the first frame update
+    [Header("login ui panel")]
+    public InputField playernameinput;
+    public GameObject loginuipanel;
+
+
+    [Header("game options ui panel")]
+    public GameObject gameoptionsuipanel;
+
+
+    [Header("createroom ui panel")]
+    public GameObject createroompanel;
+
+    [Header("insideroom ui panel")]
+    public GameObject insideroompanel;
+
+    [Header("room list ui panel")]
+    public GameObject roomlistuipanel;
+    #region unity
+    void Start()
+    {
+        activatepanel(loginuipanel.name);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    #endregion unity
+    #region ui callbacks
+    public void Onloginbuttonclicked()
+    {
+        string playername = playernameinput.text;
+        if (!string.IsNullOrEmpty(playername))
+        {
+
+            PhotonNetwork.LocalPlayer.NickName = playername;
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        else {
+
+            Debug.Log("invalid name");
+        }
+        
+    }
+    #endregion ui callbacks
+    #region photon callbacks
+    public override void OnConnected()
+    {
+        Debug.Log("connected to internet");
+    }
+    public override void OnConnectedToMaster()
+    {
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName + "is connected to photn");
+        activatepanel(gameoptionsuipanel.name);
+    }
+    #endregion photon callbacks
+    #region public methods
+    public void activatepanel(string paneltobeactivated) {
+
+        loginuipanel.SetActive(paneltobeactivated.Equals(loginuipanel.name));
+        gameoptionsuipanel.SetActive(paneltobeactivated.Equals(gameoptionsuipanel.name));
+        createroompanel.SetActive(paneltobeactivated.Equals(createroompanel.name));
+        insideroompanel.SetActive(paneltobeactivated.Equals(insideroompanel.name));
+    }
+    #endregion
+}
