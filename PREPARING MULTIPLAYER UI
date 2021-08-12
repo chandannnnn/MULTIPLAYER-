@@ -73,3 +73,7 @@ public class networkmanager : MonoBehaviourPunCallbacks
     }
     #endregion
 }
+
+------------------------------------------------------------------------------------------------
+THIS CODE IS USED TO CHANGE THE SCENES IN UI ITSELF
+.CREATE ALL YOUR SCENES IN UI FORMAT AND DRAG AND DROP THOSE SCENES IN THE GAMEOBJECT
